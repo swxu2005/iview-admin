@@ -22,8 +22,8 @@ class httpRequest {
   interceptors (instance, url) {
     // 添加请求拦截器
     instance.interceptors.request.use(config => {
-      if (!config.url.includes('/users')) {
-        config.headers['x-access-token'] = Cookies.get(TOKEN_KEY)
+      if (!config.url.includes('/login')) {
+        config.headers['token'] = Cookies.get(TOKEN_KEY)
       }
       // Spin.show()
       // 在发送请求之前做些什么
@@ -42,8 +42,9 @@ class httpRequest {
           // Spin.hide()
         }, 500)
       }
-      if (!(data instanceof Blob)) {
-        if (data.code !== 200) {
+      // 个别后端接口，返回的直接是一个数组
+      if (!(data instanceof Blob) && !(Array.isArray(data))) {
+        if (data.code !== 0) {
           // 后端服务在个别情况下回报201，待确认
           if (data.code === 401) {
             Cookies.remove(TOKEN_KEY)

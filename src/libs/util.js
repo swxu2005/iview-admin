@@ -278,3 +278,97 @@ export const findNodeDownward = (ele, tag) => {
 export const showByAccess = (access, canViewAccess) => {
   return hasOneOf(canViewAccess, access)
 }
+
+/**
+ * 写localStorage
+ */
+export const setLocalStorage = (name, content) => {
+  if (!name) return
+  if (typeof content !== 'string') {
+    content = JSON.stringify(content)
+  }
+  window.localStorage.setItem(name, content)
+}
+
+/**
+ * 读localStorage
+ */
+export const getLocalStorage = name => {
+  if (!name) return
+  let result = window.localStorage.getItem(name)
+  if (result) {
+    result = JSON.parse(result)
+  }
+  return result
+}
+
+/**
+ * 从平级的列表（元素须带当前id与父id）得到iView的Tree组件所需的数据结构
+ * origList：平级列表
+ * currIdKey：当前id的键名
+ * parentIdKay：父id的键名
+ * isSubExpand: 子层是否展开
+ * checkedIdList: 需要标记为checked的id列表
+ * selectedIdList: 需要标记为selected的id列表
+ */
+export const getTreeFromPlainArray = (origList, currIdKey, parentIdKey, isSubExpand = false, checkedIdList = null, selectedIdList = null) => {
+  let currIdList = origList.map(item => item[currIdKey])
+  let parentIdList = origList.map(item => item[parentIdKey])
+  currIdList = Array.from(new Set(currIdList)) // 去重
+  parentIdList = Array.from(new Set(parentIdList)) // 去重
+
+  // 找到根的id是多少
+  const rootIdList = parentIdList.filter(item => currIdList.indexOf(item) < 0)
+
+  // 找出根元素
+  let rootElemList = origList.filter(item => rootIdList.indexOf(item[parentIdKey]) >= 0)
+  rootElemList.sort((item1, item2) => item1.orderNum - item2.orderNum)
+
+  // 创建Tree的根层节点
+  let tree = rootElemList.map((item) => {
+    let treeItem = JSON.parse(JSON.stringify(item)) // Object.assign(item)
+    treeItem.title = item.name
+    treeItem.expand = true // 根层总是展开的
+    // 注：父层不需要判断是否checked，因为子层有checked的话，父层会有indeterminate状态
+    // if (Array.isArray(checkedIdList) && checkedIdList.length > 0 && checkedIdList.indexOf(item[currIdKey]) >= 0) {
+    //   console.log(item.menuId)
+    //   treeItem.checked = true
+    // }
+    // 判断是否被selected
+    if (Array.isArray(selectedIdList) && selectedIdList.length > 0 && selectedIdList.indexOf(item[currIdKey]) >= 0) {
+      treeItem.selected = true
+    }
+    return treeItem
+  })
+
+  // 遍历创建Tree的子层节点
+  for (let parentElem of tree) {
+    createSubElem(parentElem, origList, currIdKey, parentIdKey, isSubExpand, checkedIdList, selectedIdList)
+  }
+  return tree
+}
+
+function createSubElem (parentElem, origList, currIdKey, parentIdKey, isSubExpand, checkedIdList, selectedIdList) {
+  let subList = origList.filter(item => item[parentIdKey] === parentElem[currIdKey])
+  if (subList.length === 0) {
+    return
+  }
+  subList.sort((item1, item2) => item1.orderNum - item2.orderNum)
+
+  parentElem.children = subList.map((item) => {
+    let treeItem = JSON.parse(JSON.stringify(item)) // Object.assign(item)
+    treeItem.title = item.name
+    treeItem.expand = isSubExpand
+    // 注：这里只适用于菜单(按钮)的场景，type=2是按钮类型
+    if (item.type === 2 && Array.isArray(checkedIdList) && checkedIdList.indexOf(item[currIdKey]) >= 0) {
+      treeItem.checked = true
+    }
+    if (Array.isArray(selectedIdList) && selectedIdList.length > 0 && selectedIdList.indexOf(item[currIdKey]) >= 0) {
+      treeItem.selected = true
+    }
+    return treeItem
+  })
+  for (let child of parentElem.children) {
+    createSubElem(child, origList, currIdKey, parentIdKey, isSubExpand, checkedIdList)
+  }
+}

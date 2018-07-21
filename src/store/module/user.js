@@ -36,8 +36,7 @@ export default {
           userName,
           password
         }).then(res => {
-          const data = res.data
-          commit('setToken', data.token)
+          commit('setToken', res.token)
           resolve()
         }).catch(err => {
           reject(err)
@@ -63,11 +62,16 @@ export default {
     // 获取用户相关信息
     getUserInfo ({ state, commit }) {
       return new Promise((resolve, reject) => {
+        // ！！！ iview-admin原项目中总是从后端拉取用户信息，这里改为：当登陆时，或页面刷新（丢失vuex中的access信息）时，才拉取
+        if (Array.isArray(state.access) && state.access.length > 0) {
+          resolve({access: state.access})
+          return
+        }
         getUserInfo(state.token).then(res => {
-          const data = res.data
+          let data = res.user
           commit('setAvator', data.avator)
-          commit('setUserName', data.user_name)
-          commit('setUserId', data.user_id)
+          commit('setUserName', data.username)
+          commit('setUserId', data.userId)
           commit('setAccess', data.access)
           resolve(data)
         }).catch(err => {
