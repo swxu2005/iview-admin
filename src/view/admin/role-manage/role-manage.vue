@@ -1,8 +1,12 @@
+
+<style>
+ @import '../admin.less';
+</style>
 <template>
   <Card>
-    <Input v-model="q" placeholder="请输入角色名" clearable style="width: 200px"></Input>
-    <Button type="success" @click="query()">查询</Button>
-    <Button type="primary" @click="add()">新增</Button>
+    <Input v-model="q" placeholder="请输入角色名" clearable style="width: 200px" class="input"></Input>
+    <Button type="success" @click="query()" class="query">查询</Button>
+    <Button type="primary" @click="add()" class="add">新增</Button>
 
     <Table border :columns="columnsDef" :data="tableData"></Table>
     <div style="margin: 10px;overflow: hidden">

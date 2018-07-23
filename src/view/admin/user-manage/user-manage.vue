@@ -1,9 +1,13 @@
+
+<style>
+ @import '../admin.less';
+</style>
 <template>
   <Card>
-    <Input v-model="q" placeholder="请输入用户名" clearable style="width: 200px"></Input>
-    <Button type="success" @click="queryUserList()">查询</Button>
-    <Button type="primary" @click="add()">新增</Button>
-    <Button type="warning" @click="exportExcel()">导出</Button>
+    <Input v-model="q" placeholder="请输入用户名" clearable style="width: 200px" class="input"></Input>
+    <Button type="success" @click="queryUserList()" class="query">查询</Button>
+    <Button type="primary" @click="add()" class="add">新增</Button>
+    <Button type="warning" @click="exportExcel()" class="export">导出</Button>
     <Table border :columns="columnsDef" :data="tableData"></Table>
     <div style="margin: 10px;overflow: hidden">
         <div style="float: right;">

@@ -1,8 +1,12 @@
+<style>
+    @import '../admin.less';
+</style>
+
 <template>
   <Card>
-    <Button type="success" @click="add()">新增</Button>
-    <Button type="primary" @click="show()">修改</Button>
-    <Button type="warning" @click="del()">删除</Button>
+    <Button type="success" @click="add()" class="add">新增</Button>
+    <Button type="primary" @click="show()" class="update">修改</Button>
+    <Button type="warning" @click="del()" class="delete">删除</Button>
     <Tree ref="deptTree" :data="deptTree"></Tree>
     <Modal v-model="formModalVisable" :title="formModalTitle" @on-ok="formModalOk()" >
       <Form :model="formItem" :label-width="120">
