@@ -1,5 +1,6 @@
 const path = require('path')
 const fs = require('fs')
+const webpack = require('webpack')
 
 const resolve = dir => {
   return path.join(__dirname, dir)
@@ -35,6 +36,14 @@ module.exports = {
       .set('@', resolve('src')) // key,value自行定义，比如.set('@@', resolve('src/components'))
       .set('_c', resolve('src/components'))
       .set('_conf', resolve('config'))
+  },
+  configureWebpack: {
+    plugins: [
+      // 读取本地系统变量，设置请求后端的URL
+      new webpack.DefinePlugin({
+        'process.env.DEV_URL': JSON.stringify(process.env.DEV_URL)
+      })
+    ]
   },
   // 打包时不生成.map文件
   productionSourceMap: false

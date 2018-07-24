@@ -4,6 +4,7 @@
       <Avatar :src="userAvator"/>
       <Icon :size="12" type="arrow-down-b"></Icon>
       <DropdownMenu slot="list">
+        <DropdownItem name="ownspace">个人中心</DropdownItem>
         <DropdownItem name="logout">退出登录</DropdownItem>
       </DropdownMenu>
     </Dropdown>
@@ -32,6 +33,11 @@ export default {
             this.$router.push({
               name: 'login'
             })
+          })
+          break
+        case 'ownspace':
+          this.$router.push({
+            name: 'ownspace'
           })
           break
       }

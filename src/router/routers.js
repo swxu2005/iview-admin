@@ -43,6 +43,16 @@ const defaultRoutes = [
           notCache: true
         },
         component: () => import('@/view/single-page/home')
+      },
+      {
+        path: 'ownspace',
+        name: 'ownspace',
+        meta: {
+          title: '个人中心',
+          hideInMenu: true,
+          notCache: true
+        },
+        component: () => import('@/view/own-space/own-space.vue')
       }
     ]
   },
